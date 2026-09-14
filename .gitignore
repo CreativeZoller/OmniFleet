@@ -1,0 +1,78 @@
+# Local development notes / prompts
+.local/
+.dev-local/
+.ai/
+.prompts/
+scratch/
+
+# --- Rust ---
+debug/
+target/
+**/*.rs.bk
+*.pdb
+mutants.out/
+mutants.out.old/
+
+# --- Vue / Node ---
+node_modules/
+dist/
+dist-ssr/
+.vite/
+.output/
+.turbo/
+coverage/
+*.tsbuildinfo
+*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Package manager caches
+.npm
+.eslintcache
+.stylelintcache
+.pnpm-store/
+.yarn-integrity
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# --- Environment ---
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# --- Docker / local data ---
+postgres-data/
+data/
+
+# --- Test artifacts ---
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+cypress/videos/
+cypress/screenshots/
+
+# --- OS / editors ---
+.DS_Store
+Thumbs.db
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
