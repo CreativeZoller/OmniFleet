@@ -2,7 +2,7 @@
 
 ## Status
 
-**Stage 0 — Draft**
+**Stage 0 — Accepted**
 
 This document defines the initial domain boundaries and terminology used by OmniFleet.
 
@@ -225,9 +225,9 @@ A Member may eventually be allowed to:
 * record charging sessions
 * view analytics and reports
 
-Detailed authorization rules are intentionally deferred until the authentication stage.
-
 The important domain decision is that the **role belongs to the membership**, not directly to the User.
+
+Resource authorization follows that membership relationship, as specified in ADR-0001 and ADR-0008. Exact endpoint-level permission matrices will continue to evolve with each vertical slice.
 
 ---
 
@@ -358,6 +358,18 @@ may later provide a common comparison layer.
 
 ---
 
+## HEV / mild hybrid
+
+Conventional non-plug-in hybrids and mild hybrids are initially modeled as:
+
+```text
+ICE
+```
+
+They receive fuel through RefuelEvents and do not record external ChargeEvents. See ADR-0002.
+
+---
+
 # 8. Vehicle Status
 
 Vehicles should support a lifecycle that does not require historical records to be deleted.
@@ -422,23 +434,14 @@ For the initial product, the following are expected to be fundamental:
 vehicle
 timestamp
 odometer
+fuel_type
 liters
 cost information
 currency
 full / partial indicator
 ```
 
-The exact relationship between:
-
-```text
-unit_price
-liters
-total_amount
-```
-
-will be defined during the event-model stage.
-
-The application may calculate one value from the others while still preserving user-entered observations appropriately.
+When `total_amount` is explicitly confirmed, it is the authoritative paid amount. `unit_price` may be observed or derived. The application may calculate one monetary value from the others while preserving confirmed observations. See ADR-0003 and ADR-0005.
 
 ---
 
@@ -859,7 +862,7 @@ Fuel added must be greater than zero.
 
 ### Charge Energy
 
-Recorded energy added, when present, must not be negative.
+Recorded energy added, when present, must be greater than zero.
 
 ### Odometer
 
@@ -875,45 +878,38 @@ Derived calculations must never replace the original event observations.
 
 ---
 
-# 22. Questions Intentionally Left Open
+# 22. Resolved During Stage 0 vs Still Deferred
 
-Stage 0 should resolve these before implementation reaches the relevant feature.
+Later Stage 0 ADRs and `docs/calculations.md` resolved several questions that this document originally left open.
 
-### Household
+### Resolved
 
-* Can a user belong to multiple households in v1?
-* Can ownership be transferred?
-* Must every household always have at least one owner?
+* A user may belong to multiple households in the domain and persistence model; the initial UI may still assume one active household (ADR-0001)
+* Ownership is transferred by promoting/demoting memberships; no special transfer operation is required (ADR-0001)
+* Every active household must have at least one Owner (ADR-0001)
+* Multi-fuel vehicles use a supported-fuel list plus per-event `fuel_type` (ADR-0002)
+* HEV and mild hybrid are initially modeled as ICE (ADR-0002)
+* Tank and battery capacities are optional metadata (ADR-0002)
+* Confirmed `total_amount` is the authoritative paid amount when values disagree slightly due to rounding (ADR-0003, ADR-0005)
+* Historical odometer and other observation corrections are valid; dependent derived data must be recalculated (ADR-0003, ADR-0004)
+* Charger-delivered kWh and battery/SoC-based energy remain independent observations; Stage 0 `energy_kwh` is delivered energy (ADR-0003)
+* ICE full-to-full consumption, including partials between full anchors, is Verified (ADR-0006, `calculations.md`)
+* The range-based Driver vs. Car ratio is Experimental and is not applied to PHEVs (`calculations.md`)
+* Invalid or incomplete segments produce Unavailable/Invalid results rather than fake precision (ADR-0006, `calculations.md`)
 
-### Vehicle
+### Still deferred
 
-* Exact representation of fuel configuration
-* Exact representation of multi-fuel vehicles
-* Whether HEV requires its own explicit powertrain type
-* Whether tank/battery capacities are required or optional metadata
+* Exact SQL representation of fuel and electric configuration
+* Charging-loss correction beyond distinguishing delivered vs stored energy
+* Home charging price representation beyond a normal ChargeEvent
+* Arbitrary partial-only ICE consumption estimation
+* EV verified-consumption classification
+* PHEV combined-spend segment boundaries
+* Exact calculation-version persistence
+* ChargeEvent canonical calendar time for ordering and monthly spending (`started_at` vs `ended_at`)
+* Event audit/versioning and odometer-reset workflow
 
-### Refueling
-
-* Which price fields are authoritative when values disagree?
-* Can historical odometer errors be corrected?
-* How should deleted/corrected events affect later calculations?
-
-### Charging
-
-* How should charging losses be represented?
-* Should charger-delivered kWh and battery-added kWh be distinct measurements?
-* How should home charging prices be represented?
-
-### Analytics
-
-* Exact definition of estimated consumption
-* Exact range-based efficiency methodology
-* Calculation versioning strategy
-* Rules for invalid or incomplete segments
-
-These questions are not failures of the model.
-
-They are explicitly tracked decisions that should be resolved when enough context exists.
+These remaining items are not required to begin the v0.1 Walking Skeleton.
 
 ---
 

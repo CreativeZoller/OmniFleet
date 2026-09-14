@@ -60,7 +60,7 @@ Supports charging sessions including:
 * odometer
 * energy added in kWh
 * start and end State of Charge
-* charging duration
+* charging duration (derived from start and end time)
 * charging cost
 * charger type
 * charging power
@@ -122,6 +122,8 @@ Fuel Used / Distance Traveled × 100
 ```
 
 This produces a verified real-world measurement between compatible full refuels.
+
+A verified ICE segment may include partial refuels between two full-tank anchors. Fuel added after the starting full refuel through the closing full refuel is counted. A partial refuel by itself is not treated as the amount of fuel consumed since the previous event.
 
 ---
 
@@ -467,17 +469,17 @@ Real-world usage may move features forward, postpone them, simplify them, or rem
 
 Define the core rules before committing them deeply to the application.
 
-* [ ] Household and membership model
-* [ ] Vehicle and powertrain model
-* [ ] ICE refuel model
-* [ ] EV charge model
-* [ ] PHEV behavior
-* [ ] Currency model
-* [ ] Verified consumption calculations
-* [ ] Estimated consumption calculations
-* [ ] Experimental efficiency calculations
-* [ ] Calculation fixtures and unit-test scenarios
-* [ ] Architecture decision records / domain documentation
+* [x] Household and membership model
+* [x] Vehicle and powertrain model
+* [x] ICE refuel model
+* [x] EV charge model
+* [x] PHEV behavior
+* [x] Currency model
+* [x] Verified consumption calculations
+* [x] Estimated consumption calculations
+* [x] Experimental efficiency calculations
+* [x] Calculation fixtures and unit-test scenarios
+* [x] Architecture decision records / domain documentation
 
 ---
 
@@ -768,16 +770,26 @@ Environment configuration and development commands will be documented as the v0.
 
 ## 📚 Documentation
 
-Architecture and domain decisions will be documented alongside the codebase.
+Architecture and domain decisions are documented alongside the codebase.
 
-Planned documentation includes:
+Stage 0 documentation:
 
 ```text
 docs/
 ├── domain-model.md
 ├── calculations.md
-├── architecture.md
+├── scenarios.md
+├── stage-0-handoff.md
 └── adr/
+    ├── 0001-household-and-membership-model.md
+    ├── 0002-vehicle-and-powertrain-model.md
+    ├── 0003-refuel-and-charge-event-model.md
+    ├── 0004-raw-vs-derived-data.md
+    ├── 0005-money-and-currency-model.md
+    ├── 0006-consumption-measurement-quality.md
+    ├── 0007-application-architecture.md
+    ├── 0008-api-and-authentication-strategy.md
+    └── 0009-data-persistence-and-migration-strategy.md
 ```
 
 The calculation documentation will explicitly distinguish between:
